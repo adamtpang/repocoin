@@ -46,8 +46,9 @@ Nothing else earns: not opening PRs, not commits, not stars, not lines changed. 
 
 ## Market
 
-- There is no market. Points cannot be listed, priced, or traded.
-- A market, and turning points into a transferable token, comes only after a lawyer reviews the design and Adam decides to proceed.
+- There is a **paper market** at `/adamtpang/repocoin/market`. It uses play money: paper credits are not redeemable, paper trades never move earned $REPO points, and no paper price is a price for any future token.
+- Its job is to learn whether teams actually want priority tiers before anything is real.
+- A real market, and turning points into a transferable token, comes only after a lawyer reviews the design and Adam decides to proceed.
 
 ## What $REPO is not
 

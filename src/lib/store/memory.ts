@@ -1,4 +1,5 @@
 import { randomUUID } from "node:crypto";
+import { PaperMarket, type PlaceOrderInput } from "../market";
 import type { AuditEntry, LedgerEntry, Project, PullCredit, RoleBond } from "../types";
 import type { ConnectRepoInput, CreditResult, NewCredit, Store, VoidInput } from "./types";
 
@@ -11,8 +12,35 @@ export class MemoryStore implements Store {
   bonds: RoleBond[] = [];
   auditLog: AuditEntry[] = [];
 
+  market = new PaperMarket();
+
   /** `now` lets the fixture demo stamp rows with its simulated clock. */
   constructor(private now: () => Date = () => new Date()) {}
+
+  async placePaperOrder(input: PlaceOrderInput) {
+    return this.market.place(input);
+  }
+
+  async cancelPaperOrder(orderId: string, githubUserId: number) {
+    return this.market.cancel(orderId, githubUserId);
+  }
+
+  async listOpenPaperOrders(projectId: string) {
+    return this.market.orders.filter((o) => o.projectId === projectId && o.status === "open");
+  }
+
+  async listPaperFills(projectId: string, limit: number) {
+    // Newest first; fills from one order keep their match order.
+    return this.market.fills
+      .filter((f) => f.projectId === projectId)
+      .reverse()
+      .sort((a, b) => b.createdAt.localeCompare(a.createdAt))
+      .slice(0, limit);
+  }
+
+  async listPaperAccounts(projectId: string) {
+    return this.market.accounts.filter((a) => a.projectId === projectId);
+  }
 
   async claimDelivery(deliveryId: string, event: string) {
     if (this.deliveries.has(deliveryId)) return false;

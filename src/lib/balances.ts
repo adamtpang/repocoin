@@ -1,3 +1,4 @@
+import type { PaperAccount } from "./market";
 import { vestedPoints } from "./vesting";
 import type { LedgerEntry, PullCredit, RoleBond } from "./types";
 
@@ -58,6 +59,37 @@ export function computeBalances(
   return [...rows.values()].sort(
     (a, b) => b.vestedPoints + b.unvestedPoints - (a.vestedPoints + a.unvestedPoints) || b.reputation - a.reputation,
   );
+}
+
+/** Earned points a person can put up in the paper market: vested minus bonded. */
+export function sellableBase(b: ContributorBalance | undefined): number {
+  return b ? Math.max(0, b.vestedPoints - b.bondedPoints) : 0;
+}
+
+export interface PaperPosition {
+  githubUserId: number;
+  login: string;
+  /** Paper units: unbonded vested points plus net paper fills. */
+  units: number;
+  credits: number;
+}
+
+/** Paper positions for everyone with vested points or a paper account. */
+export function paperPositions(
+  balances: ContributorBalance[],
+  accounts: PaperAccount[],
+  startCredits: number,
+): PaperPosition[] {
+  const out = new Map<number, PaperPosition>();
+  for (const b of balances) {
+    const base = sellableBase(b);
+    if (base > 0) out.set(b.githubUserId, { githubUserId: b.githubUserId, login: b.login, units: base, credits: startCredits });
+  }
+  for (const a of accounts) {
+    const base = sellableBase(balances.find((b) => b.githubUserId === a.userId));
+    out.set(a.userId, { githubUserId: a.userId, login: a.login, units: base + a.unitsDelta, credits: a.credits });
+  }
+  return [...out.values()].sort((x, y) => y.units - x.units);
 }
 
 export function totals(balances: ContributorBalance[]) {

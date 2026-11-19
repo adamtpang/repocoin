@@ -51,7 +51,7 @@ export function ProjectHeader({
   active,
 }: {
   project: Project;
-  active: "constitution" | "ledger";
+  active: "constitution" | "ledger" | "market";
 }) {
   const base = `/${project.owner}/${project.repo}`;
   const ticker = parseTicker(project.constitutionMarkdown);
@@ -77,6 +77,7 @@ export function ProjectHeader({
       <nav className="mt-6 flex gap-6 text-sm">
         {tab(base, "Constitution", active === "constitution")}
         {tab(`${base}/ledger`, "Ledger", active === "ledger")}
+        {tab(`${base}/market`, "Paper market", active === "market")}
       </nav>
     </div>
   );

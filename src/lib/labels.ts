@@ -17,3 +17,7 @@ export const VOID_LABEL = "repocoin:void";
 
 /** Path in the connected repo that publishes the constitution when merged. */
 export const CONSTITUTION_PATH = ".repocoin/constitution.md";
+
+/** Label on every paper market view. */
+export const PLAY_MONEY =
+  "Play money. Paper credits are not redeemable, paper trades never move earned points, and no paper price is a price for any future token.";

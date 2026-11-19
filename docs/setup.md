@@ -5,7 +5,8 @@ Draft settings only. Nothing here has been created. The agent that built the MVP
 ## 1. Supabase project (Adam creates it)
 
 - Create a project on the free tier.
-- Run `supabase/migrations/20261119000000_init.sql` in the SQL editor (or `npx supabase db push` with the CLI linked).
+- Run both files in `supabase/migrations/` in order, in the SQL editor (or `npx supabase db push` with the CLI linked). `npm test` already runs them on an in-process Postgres (PGlite).
+- Paper market sign-in: Authentication > Providers > GitHub. This needs a GitHub **OAuth App** (separate from the GitHub App), with callback `https://<project>.supabase.co/auth/v1/callback`. Add the site URL and `https://<host>/auth/callback` to the allowed redirect URLs.
 - Copy the URL, anon key, and service role key into the env vars below.
 - Optional: regenerate types with `npx supabase gen types typescript` and replace `src/lib/store/rows.ts`.
 
@@ -39,6 +40,12 @@ Names are in `.env.example`. Set them in the existing Vercel project `repocoin` 
 - **Publish a constitution**: merge `.repocoin/constitution.md` into the default branch. Protect the default branch, since anyone who can push there can change it.
 - **Void a credit**: add the `repocoin:void` label to a merged PR. Only admin or maintain role counts. Vesting stops; unvested points return to the treasury.
 - **Role bonds**: database only in this version. Insert a `role_bonds` row after checking eligibility (`checkBondEligibility` in `src/lib/bonds.ts`). There is no UI to post one.
+
+## Paper market
+
+- `/[owner]/[repo]/market`. Play money only: 10,000 paper credits per account (assumption), paper units start at each person's vested, unbonded points.
+- Paper trades never touch `ledger_entries` or `pull_credits`, so earned points stay nontransferable.
+- Matching runs in the `place_paper_order` SQL function, locked per project. `src/lib/market.ts` is the same engine in TypeScript; `tests/sql.test.ts` checks they agree.
 
 ## Known limits of this pass
 

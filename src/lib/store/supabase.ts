@@ -11,6 +11,15 @@ import {
   type ProjectRow,
   type PullCreditRow,
 } from "./rows";
+import type { PlaceOrderInput, PlaceResult } from "../market";
+import {
+  toPaperAccount,
+  toPaperFill,
+  toPaperOrder,
+  type PaperAccountRow,
+  type PaperFillRow,
+  type PaperOrderRow,
+} from "./rows";
 import type { ConnectRepoInput, CreditResult, NewCredit, Store, VoidInput } from "./types";
 
 const UNIQUE_VIOLATION = "23505";
@@ -199,6 +208,61 @@ export class SupabaseStore implements Store {
         .single(),
     ) as BondRow;
     return toBond(row);
+  }
+
+  async placePaperOrder(input: PlaceOrderInput): Promise<PlaceResult> {
+    const r = check(
+      await this.db.rpc("place_paper_order", {
+        p_project_id: input.projectId,
+        p_user_id: input.userId,
+        p_login: input.login,
+        p_side: input.side,
+        p_price: input.price,
+        p_qty: input.qty,
+        p_sellable_base: input.sellableBase,
+      }),
+    ) as { ok: boolean; order_id?: string; filled?: number; reason?: string };
+    return r.ok
+      ? { ok: true, orderId: r.order_id!, filled: r.filled ?? 0 }
+      : { ok: false, reason: r.reason ?? "Order refused." };
+  }
+
+  async cancelPaperOrder(orderId: string, githubUserId: number) {
+    return check(
+      await this.db.rpc("cancel_paper_order", { p_order_id: orderId, p_user_id: githubUserId }),
+    ) as boolean;
+  }
+
+  async listOpenPaperOrders(projectId: string) {
+    const rows = check(
+      await this.db
+        .from("paper_orders")
+        .select("*")
+        .eq("project_id", projectId)
+        .eq("status", "open")
+        .order("seq", { ascending: true })
+        .limit(500),
+    ) as PaperOrderRow[];
+    return rows.map(toPaperOrder);
+  }
+
+  async listPaperFills(projectId: string, limit: number) {
+    const rows = check(
+      await this.db
+        .from("paper_fills")
+        .select("*")
+        .eq("project_id", projectId)
+        .order("seq", { ascending: false })
+        .limit(limit),
+    ) as PaperFillRow[];
+    return rows.map(toPaperFill);
+  }
+
+  async listPaperAccounts(projectId: string) {
+    const rows = check(
+      await this.db.from("paper_accounts").select("*").eq("project_id", projectId),
+    ) as PaperAccountRow[];
+    return rows.map(toPaperAccount);
   }
 
   async audit(

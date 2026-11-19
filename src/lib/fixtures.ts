@@ -1,4 +1,4 @@
-import { computeBalances } from "./balances";
+import { computeBalances, sellableBase } from "./balances";
 import { checkBondEligibility } from "./bonds";
 import { closedPrPayload, FakeGitHub, installPayload, review } from "./github/fake";
 import { defaultConstitution } from "./constitution";
@@ -129,6 +129,41 @@ async function buildDemo(start: Date): Promise<MemoryStore> {
   ]);
   await merge(23, "Whitespace cleanup", people.sam, 25, []);
   await merge(25, "Bump lodash from 4.17.20 to 4.17.21", people.bot, 15, approvedByMara(15));
+
+  // Paper market: contributors offer vested points, a fake company bids for a tier.
+  const acme = { id: 3001, login: "acme-corp" };
+  const trade = async (
+    who: { id: number; login: string },
+    side: "buy" | "sell",
+    price: number,
+    qty: number,
+    daysAgo: number,
+  ) => {
+    clock = new Date(start.getTime() - daysAgo * DAY);
+    const balances = computeBalances(
+      await store.listCredits(project.id),
+      await store.listLedger(project.id),
+      await store.listBonds(project.id),
+      clock,
+    );
+    const r = await store.placePaperOrder({
+      projectId: project.id,
+      userId: who.id,
+      login: who.login,
+      side,
+      price,
+      qty,
+      sellableBase: sellableBase(balances.find((b) => b.githubUserId === who.id)),
+      at: clock.toISOString(),
+    });
+    if (!r.ok) throw new Error(`fixture order refused: ${r.reason}`);
+  };
+  await trade(people.ana, "sell", 6, 40, 10);
+  await trade(people.ana, "sell", 8, 60, 10);
+  await trade(people.ben, "sell", 7, 20, 9);
+  await trade(acme, "buy", 7, 50, 6);
+  await trade(acme, "buy", 5, 200, 5);
+  await trade(people.mara, "buy", 4, 100, 2);
 
   return store;
 }

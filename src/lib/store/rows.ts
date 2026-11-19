@@ -3,6 +3,7 @@
  * to match the checked-in schema. Once a Supabase project exists, regenerate
  * with `npx supabase gen types typescript` and replace this file.
  */
+import type { PaperAccount, PaperFill, PaperOrder } from "../market";
 import type { AuditEntry, LedgerEntry, Project, PullCredit, RoleBond } from "../types";
 
 export interface ProjectRow {
@@ -80,7 +81,79 @@ export interface AuditRow {
   created_at: string;
 }
 
-export const toProject = (r: ProjectRow): Project => ({
+export interface PaperOrderRow {
+  id: string;
+  project_id: string;
+  github_user_id: number;
+  github_login: string;
+  side: "buy" | "sell";
+  price: number;
+  qty: number;
+  remaining: number;
+  status: "open" | "filled" | "cancelled";
+  seq: number;
+  created_at: string;
+}
+
+export interface PaperFillRow {
+  id: string;
+  project_id: string;
+  buy_order_id: string;
+  sell_order_id: string;
+  buyer_github_user_id: number;
+  buyer_login: string;
+  seller_github_user_id: number;
+  seller_login: string;
+  price: number;
+  qty: number;
+  created_at: string;
+}
+
+export interface PaperAccountRow {
+  project_id: string;
+  github_user_id: number;
+  github_login: string;
+  credits: number;
+  units_delta: number;
+}
+
+export const toPaperOrder = (r: PaperOrderRow): PaperOrder => ({
+  id: r.id,
+  projectId: r.project_id,
+  userId: Number(r.github_user_id),
+  login: r.github_login,
+  side: r.side,
+  price: r.price,
+  qty: r.qty,
+  remaining: r.remaining,
+  status: r.status,
+  seq: Number(r.seq),
+  createdAt: r.created_at,
+});
+
+export const toPaperFill = (r: PaperFillRow): PaperFill => ({
+  id: r.id,
+  projectId: r.project_id,
+  buyOrderId: r.buy_order_id,
+  sellOrderId: r.sell_order_id,
+  buyerId: Number(r.buyer_github_user_id),
+  buyerLogin: r.buyer_login,
+  sellerId: Number(r.seller_github_user_id),
+  sellerLogin: r.seller_login,
+  price: r.price,
+  qty: r.qty,
+  createdAt: r.created_at,
+});
+
+export const toPaperAccount = (r: PaperAccountRow): PaperAccount => ({
+  projectId: r.project_id,
+  userId: Number(r.github_user_id),
+  login: r.github_login,
+  credits: Number(r.credits),
+  unitsDelta: Number(r.units_delta),
+});
+
+export const toProject =(r: ProjectRow): Project => ({
   id: r.id,
   githubRepoId: Number(r.github_repo_id),
   owner: r.owner,

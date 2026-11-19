@@ -5,7 +5,7 @@
 -- All writes go through the server with the service role key. The anon key
 -- can only read the public tables (constitutions, ledgers, credits, bonds).
 
-create extension if not exists pgcrypto;
+-- gen_random_uuid() is built into Postgres 13+, so no extension is needed.
 
 -- People, keyed by GitHub account. One GitHub account per contributor in the
 -- MVP (sybil basics from docs/spec.md).

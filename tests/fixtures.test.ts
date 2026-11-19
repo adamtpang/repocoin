@@ -16,5 +16,16 @@ describe("fixture demo", () => {
     expect(rejected.sort()).toEqual(["bot_author", "no_approval", "self_approval_only"]);
     const balances = computeBalances(credits, await store.listLedger(project!.id), await store.listBonds(project!.id), new Date());
     expect(balances.find((b) => b.login === "spam-sam")?.unvestedPoints).toBe(0);
+
+    // Paper market trades left earned points untouched.
+    const fills = await store.listPaperFills(project!.id, 50);
+    expect(fills.map((f) => [f.buyerLogin, f.sellerLogin, f.price, f.qty])).toEqual(
+      expect.arrayContaining([
+        ["acme-corp", "dev-ana", 6, 40],
+        ["acme-corp", "dev-ben", 7, 10],
+      ]),
+    );
+    expect(fills[0].price).toBe(7); // newest fill first, even within one order
+    expect((await store.listLedger(project!.id)).some((e) => e.githubLogin === "acme-corp")).toBe(false);
   });
 });

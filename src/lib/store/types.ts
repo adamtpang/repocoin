@@ -1,3 +1,4 @@
+import type { PaperAccount, PaperFill, PaperOrder, PlaceOrderInput, PlaceResult } from "../market";
 import type {
   AuditEntry,
   BondRole,
@@ -69,6 +70,13 @@ export interface Store {
     role: BondRole;
     bondPoints: number;
   }): Promise<RoleBond>;
+
+  /** Paper market. Play money; never touches the earned-points ledger. */
+  placePaperOrder(input: PlaceOrderInput): Promise<PlaceResult>;
+  cancelPaperOrder(orderId: string, githubUserId: number): Promise<boolean>;
+  listOpenPaperOrders(projectId: string): Promise<PaperOrder[]>;
+  listPaperFills(projectId: string, limit: number): Promise<PaperFill[]>;
+  listPaperAccounts(projectId: string): Promise<PaperAccount[]>;
 
   audit(
     projectId: string | null,
