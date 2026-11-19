@@ -1,4 +1,6 @@
-import { Section } from "./ui";
+import { NOT_MONEY } from "@/lib/labels";
+import { PRIORITY_TIERS, TIER_LOCK_DAYS } from "@/lib/tiers";
+import { Pts, Section } from "./ui";
 
 const UTILITIES = [
   {
@@ -34,6 +36,33 @@ export function DependentsPanel() {
             <p className="text-sm leading-relaxed text-muted">{u.body}</p>
           </div>
         ))}
+      </div>
+      <h3 className="mb-3 mt-8 font-medium">Priority tiers</h3>
+      <div className="table-wrap">
+        <table className="rc">
+          <caption>
+            Tier by locked holding, counted after {TIER_LOCK_DAYS} days locked so it cannot be
+            flash-bought. Thresholds are assumptions. {NOT_MONEY}
+          </caption>
+          <thead>
+            <tr>
+              <th>Tier</th>
+              <th className="r">Holding</th>
+              <th>What it gets</th>
+            </tr>
+          </thead>
+          <tbody>
+            {PRIORITY_TIERS.map((t) => (
+              <tr key={t.name}>
+                <td>{t.name}</td>
+                <td className="r whitespace-nowrap">
+                  {t.minHolding === 0 ? <span className="text-muted">none</span> : <Pts value={t.minHolding} />}
+                </td>
+                <td className="text-muted">{t.perks.join(". ")}.</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
       </div>
       <div className="mt-6 flex flex-wrap items-center gap-4">
         <button

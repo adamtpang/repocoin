@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { parseTicker } from "@/lib/constitution";
 import { NOT_MONEY } from "@/lib/labels";
 import type { DataMode } from "@/lib/store";
 import type { Project } from "@/lib/types";
@@ -53,6 +54,7 @@ export function ProjectHeader({
   active: "constitution" | "ledger";
 }) {
   const base = `/${project.owner}/${project.repo}`;
+  const ticker = parseTicker(project.constitutionMarkdown);
   const tab = (href: string, label: string, on: boolean) => (
     <Link
       href={href}
@@ -66,6 +68,7 @@ export function ProjectHeader({
       <p className="mark mb-2">{project.connected ? "Connected repo" : "Disconnected repo"}</p>
       <h1 className="text-3xl font-medium tracking-tight sm:text-4xl">
         {project.owner}/{project.repo}
+        {ticker && <span className="num ml-3 align-middle text-lg text-accent">${ticker}</span>}
       </h1>
       <p className="mt-2 text-sm text-muted">
         Default branch <code className="num">{project.defaultBranch}</code>

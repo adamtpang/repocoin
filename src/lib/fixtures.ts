@@ -1,7 +1,9 @@
 import { computeBalances } from "./balances";
 import { checkBondEligibility } from "./bonds";
 import { closedPrPayload, FakeGitHub, installPayload, review } from "./github/fake";
-import { DEMO_OWNER, VOID_LABEL } from "./labels";
+import { defaultConstitution } from "./constitution";
+import { CONSTITUTION_PATH, DEMO_OWNER, VOID_LABEL } from "./labels";
+import { DEFAULT_PARAMS } from "./types";
 import { MemoryStore } from "./store/memory";
 import { handleWebhook } from "./webhook";
 
@@ -43,6 +45,7 @@ async function buildDemo(start: Date): Promise<MemoryStore> {
     handleWebhook(event, `fixture-${++n}`, payload, deps);
 
   github.roles.set(people.mara.login, "admin");
+  github.files.set(CONSTITUTION_PATH, defaultConstitution(DEMO_OWNER, DEMO_REPO, DEFAULT_PARAMS, "SMPL"));
   await send("installation", installPayload({ installationId, repoId, fullName, sender: people.mara }));
 
   const merge = async (

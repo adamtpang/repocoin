@@ -1,5 +1,14 @@
 import { CONSTITUTION_PATH, VOID_LABEL } from "./labels";
+import { PRIORITY_TIERS, TIER_LOCK_DAYS } from "./tiers";
 import type { ProjectParams } from "./types";
+
+/** Reads a `Ticker: $ABC` line from a constitution. Returns null when unset. */
+export function parseTicker(markdown: string): string | null {
+  const m = markdown.match(/^[*_\s]*ticker[*_\s]*:[*_\s]*\$([a-z0-9]{2,10})\b/im);
+  return m ? m[1].toUpperCase() : null;
+}
+
+const fmt = (n: number) => n.toLocaleString("en-US");
 
 /**
  * The default constitution published when a repo is connected. It states, in
@@ -8,8 +17,15 @@ import type { ProjectParams } from "./types";
  * what the token is not. A maintainer replaces it by merging
  * `.repocoin/constitution.md` into the default branch.
  */
-export function defaultConstitution(owner: string, repo: string, p: ProjectParams): string {
+export function defaultConstitution(
+  owner: string,
+  repo: string,
+  p: ProjectParams,
+  ticker: string | null = null,
+): string {
   return `# ${owner}/${repo} constitution
+
+**Ticker:** ${ticker ? `$${ticker}` : "not set"}
 
 **Prototype points. Not money. Not a token you can sell.** This is a repocoin prototype. There is no live token, no payment, and no offering. Not legal advice.
 
@@ -42,7 +58,7 @@ export function defaultConstitution(owner: string, repo: string, p: ProjectParam
 - **Project points**: in a later version, treasury governance and only the economic rights this constitution explicitly defines. In the prototype, none: they are a record.
 - **Reputation**: nontransferable, ever. It qualifies someone for bonded roles (reviewer, steward) after ${p.minReputationToBond} reputation from accepted work.
 - **Role bonds**: posted from vested points, mocked in the database. A bond makes a role holder accountable. It does not buy merge or write access.
-- **Dependents** (companies that run this code): priority fixes, support, and roadmap say are described here as future utilities. None are for sale in the prototype.
+- **Dependents** (companies that run this code) reach priority tiers by holding the token: Backer (${fmt(PRIORITY_TIERS[1].minHolding)}) gets priority triage, Partner (${fmt(PRIORITY_TIERS[2].minHolding)}) adds a support channel, Sponsor (${fmt(PRIORITY_TIERS[3].minHolding)}) adds roadmap votes. A holding counts once locked for ${TIER_LOCK_DAYS} days. Thresholds are assumptions. Nothing is for sale in the prototype.
 - No one needs points to report a bug, open a pull request, or read the docs.
 
 ## Retained maintainer powers
