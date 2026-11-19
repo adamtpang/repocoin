@@ -11,7 +11,29 @@ Attach a token to any GitHub repo. Coming soon.
 
 Live placeholder: [https://repocoin.vercel.app](https://repocoin.vercel.app)
 
-This repository is documentation first. The product is a prototype only: points or a public testnet, not a live token, not money, and not an offering.
+The product is a prototype only: points or a public testnet, not a live token, not money, and not an offering.
+
+## Run it
+
+```bash
+npm install
+npm run dev
+```
+
+Open http://localhost:3000/repocoin-demo/sample-repo for the fixture demo (fake people and PRs run through the real credit pipeline). Live repos need Supabase and the GitHub App; see [docs/setup.md](docs/setup.md) and `.env.example`.
+
+Checks: `npm test`, `npm run lint`, `npm run typecheck`, `npm run build`.
+
+Built from the official Next.js template (`create-next-app`, Next.js 16, App Router, TypeScript, Tailwind): https://github.com/vercel/next.js/tree/canary/packages/create-next-app
+
+## Layout
+
+- `src/lib/credit.ts`: who earns. Merged into the default branch, approved by a qualified non-author, human author, connected repo.
+- `src/lib/vesting.ts`: dispute window, cliff, monthly vest, void freezes vesting.
+- `src/lib/webhook.ts`: GitHub App events. Idempotent on delivery id and on (project, PR number, merge sha).
+- `src/app/api/github/webhook/route.ts`: signature check, then the pipeline.
+- `src/app/[owner]/[repo]`: constitution page. `.../ledger`: public two-ledger view, bonds, credited PRs, audit log, dependents panel.
+- `supabase/migrations`: schema, row level security, and the atomic `credit_merge` and `void_credit` functions.
 
 ## Docs
 
@@ -23,6 +45,7 @@ Read everything in `docs/` before writing code.
 - [docs/perplexity-thread.md](docs/perplexity-thread.md) — cleaned Perplexity research thread that informed the early landscape
 - [docs/landscape.md](docs/landscape.md) — prior-art findings (live, dead, and pivoted), with links and check dates
 - [docs/names.md](docs/names.md) — name research and domain list prices (name is settled: repocoin)
+- [docs/setup.md](docs/setup.md): what Adam still has to do: Supabase, GitHub App settings draft, env vars
 - [HANDOFF.md](HANDOFF.md) — exact build steps, rules, and a ready-to-paste prompt for Fable
 
 ## Rules
