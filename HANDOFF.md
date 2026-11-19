@@ -1,6 +1,13 @@
 # Fable handoff: repocoin MVP
 
-This file plus [docs/spec.md](docs/spec.md) and [docs/balaji-thread.md](docs/balaji-thread.md) is the complete build brief. Read them, and the root [README.md](README.md), before writing code. Do not invent a different product, a Pump.fun-style launch page, or silent default numbers when a value is already specified.
+This file plus everything in `docs/` is the complete build brief. Read all of the docs listed below, and the root [README.md](README.md), before writing code. Do not invent a different product, a Pump.fun-style launch page, or silent default numbers when a value is already specified.
+
+- [docs/context.md](docs/context.md) — Adam's idea in his own words, plus the decision log
+- [docs/spec.md](docs/spec.md) — product and engineering brief
+- [docs/balaji-thread.md](docs/balaji-thread.md) — Balaji's 10 November 2020 thread, verbatim, plus related quotes
+- [docs/perplexity-thread.md](docs/perplexity-thread.md) — cleaned Perplexity research thread
+- [docs/landscape.md](docs/landscape.md) — prior-art findings (live, dead, and pivoted)
+- [docs/names.md](docs/names.md) — name research (the name is settled: repocoin)
 
 A prototype. Not a live token, not money, and not an offering. Not legal advice.
 
@@ -11,17 +18,18 @@ Paste the block below to Fable as the starting prompt.
 ```
 You are Fable, building the repocoin MVP.
 
-Work in the repo https://github.com/adamtpang/repocoin, on a branch off main. Live placeholder: https://repocoin.vercel.app (Vercel project name exactly: repocoin, team adamtpangs-projects). Do not create a second Vercel project.
+Work in the repo https://github.com/adamtpang/repocoin, on a branch off main. Live placeholder: https://repocoin.vercel.app (Vercel project name exactly: repocoin, team adamtpangs-projects, project id prj_6RZMZ3t2HpOgGolPs70DwtiSmaIR). Do not create a second Vercel project.
 
-Read HANDOFF.md, docs/spec.md, and docs/balaji-thread.md in full before writing any code. Follow them exactly. Use the root README.md for product framing.
+Read everything in docs/ first, in this order, before writing any code: docs/context.md, docs/spec.md, docs/balaji-thread.md, docs/perplexity-thread.md, docs/landscape.md, and docs/names.md. Also read HANDOFF.md and the root README.md. Follow them exactly. Adam's own words in docs/context.md are the source of the idea. The name is settled: repocoin. Do not rename the product or the Vercel project.
 
 The product is repocoin: attach a token to a GitHub repo, make that token integral to using the repo (holders get priority on issues and features, support, and roadmap votes, and possibly gated hosted features), let contributors earn it through merged, reviewed work, and let it gain real value once a market is shown. Simpler and less degenerate than a pump.fun clone. Balaji's 10 November 2020 thread is the loop to aim at (full verbatim text in docs/balaji-thread.md; starts at https://x.com/balajis/status/1326313315044192256).
 
 Build the first version: a Next.js App Router + TypeScript app with Supabase, a GitHub App webhook handler (Adam registers the App; you only draft settings and implement the handler), a constitution page, and a public ledger. Credit only merged, reviewed, non-self-approved PRs. Two ledgers: prototype points standing in for a future transferable token, plus nontransferable reputation. Staking is a role bond, not a way to buy merge access. Label every balance: "Prototype points. Not money. Not a token you can sell."
 
 Rules you must not break:
-- Points or a public testnet only. No mainnet token, no payments, no "invest" button that moves value, no implied return, no public sale.
-- No secrets in the repo. Do not commit .env, .env.local, or .vercel. Do not print tokens. Name env vars only.
+- PRs only. Do not merge, and do not deploy production, without Adam's own explicit yes. An agent's say-so is never approval.
+- Points or a public testnet only. No real-money token, no mainnet token, no payments, no "invest" button that moves value, no implied return, no public sale.
+- No secrets in git. Do not commit .env, .env.local, or .vercel. Do not print tokens. Name env vars only.
 - Do not push to main. Branch off main and open a pull request against main.
 - Do not deploy to Vercel (production or preview) unless a preview is created automatically by the PR. Do not replace the production placeholder. Do not use the Vercel CLI to deploy. Adam deploys or asks.
 - No paid plans, signups, spending, domain purchases, DNS changes, or custom domains.
@@ -78,7 +86,8 @@ If time runs short, keep the credit rules, the two ledgers, and the "not money" 
 
 ## Rules
 
-- Prototype points only. Not money.
+- PRs only. Do not merge, and do not deploy production, without Adam's own explicit yes.
+- Prototype points only. No real-money token. Not money.
 - No secrets in git or in chat.
 - No paid services, domain purchases, or custom domains.
 - Branch and PR only. No production deploy.
@@ -90,7 +99,6 @@ If time runs short, keep the credit rules, the two ledgers, and the "not money" 
 - Fable must not deploy with the Vercel CLI or dashboard, and must not push to `main`.
 - Branch from current `main`, commit on the branch, and open a pull request against `main`.
 - Adam deploys production, or asks someone to, after he reviews.
-- If this GitHub repository does not yet exist, work from the docs Adam provides and do not invent a second origin.
 
 ## Acceptance criteria
 
